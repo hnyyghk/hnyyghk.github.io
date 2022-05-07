@@ -1,5 +1,5 @@
 /*
-Animate.css - https://daneden.me/animate
+Animate.css - http://daneden.me/animate
 LICENSED UNDER THE  MIT LICENSE (MIT)
 
 Copyright (c) 2011 Dan Eden
@@ -17,7 +17,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
  */
 
 /* ThemesCollective Note: CURRENT ANIMATIONS
- * We have only included the four animations we have used here, (fadeInUp, fadeInRight, fadeInLeft & fadeInLeftBig), instead of the whole library for better page-load times. Add more to this file if you need require other animation types. The full library is included in your template package, in the 'libs' folder. You can also visit the plugin authors' site, https://daneden.me/animate for more options.
+ * We have only included the four animations we have used here, (fadeInUp, fadeInRight, fadeInLeft & fadeInLeftBig), instead of the whole library for better page-load times. Add more to this file if you need require other animation types. The full library is included in your template package, in the 'libs' folder. You can also visit the plugin authors' site, http://daneden.me/animate for more options.
  */
 
 .animated {

@@ -25,7 +25,7 @@ html.sb-init.sb-active.sb-active-right ul.filters li p,
 html.sb-init.sb-active.sb-active-right #projects .projects .label-text h3 a {
 	cursor: default;
 }
-/* For further info on how to select rgba compatible values for IE8, see > https://css-tricks.com/rgba-browser-support/ */
+/* For further info on how to select rgba compatible values for IE8, see > http://css-tricks.com/rgba-browser-support/ */
 .navbar-inner.lightnav-alt,
 #blog-post .navbar-inner { 
 	background:transparent;

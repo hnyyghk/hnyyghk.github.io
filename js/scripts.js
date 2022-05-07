@@ -47,7 +47,7 @@ $(document).ready(function($) {
 			outClass              :   'fade-out-down-sm',
 			inDuration            :    900,
 			outDuration           :    800,
-			linkElement           :   '.animsition-link',
+			linkElement           :   '.animsition-link', 
 			//e.g. linkElement   :   'a:not([target="_blank"]):not([href^=#])'
 			loading               :    true,
 			loadingParentElement  :   'body', //animsition wrapper element
@@ -56,7 +56,7 @@ $(document).ready(function($) {
 			                          '-webkit-animation-duration',
 			                          '-o-animation-duration'
 			                        ],
-			//"unSupportCss" option allows you to disable the "animsition" in case the css property in the array is not supported by your browser.
+			//"unSupportCss" option allows you to disable the "animsition" in case the css property in the array is not supported by your browser. 
 			//The default setting is to disable the "animsition" in a browser that does not support "animation-duration".
 
 			overlay               :   false,
@@ -124,7 +124,7 @@ $(document).ready(function($) {
 	    		top: 500
 	    	}
 		});
-
+		
 	    // Scrollspy for scrollto links in floating faq sidebar
 		var $body   = $(document.body);
 		var navHeight = $('.navbar').outerHeight(true) + 80;
@@ -155,10 +155,10 @@ $(document).ready(function($) {
 	     * IE10 viewport hack for Surface/desktop Windows 8 bug
 	     * Copyright 2014 Twitter, Inc.
 	     * Licensed under the Creative Commons Attribution 3.0 Unported License. For
-	     * details, see https://creativecommons.org/licenses/by/3.0/.
+	     * details, see http://creativecommons.org/licenses/by/3.0/.
 	     */
 	    // See the Getting Started docs for more information:
-	    // https://getbootstrap.com/getting-started/#support-ie10-width
+	    // http://getbootstrap.com/getting-started/#support-ie10-width
 	    if (navigator.userAgent.match(/IEMobile\/10\.0/)) {
 	        var msViewportStyle = document.createElement('style');
 	        msViewportStyle.appendChild(
